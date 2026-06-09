@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verde Tuxtepec — Revista Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Oswald:wght@300;400;600;700&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --verde-naturaleza: #2d5a3d;
+  --verde-oscuro: #1a3c27;
+  --verde-claro: #4a7c59;
+  --azul-suave: #6b8fa3;
+  --blanco: #ffffff;
+  --gris-claro: #f5f5f5;
+  --gris-texto: #555555;
+  --tono-tierra: #8b6f47;
+  --sombra: rgba(0,0,0,0.15);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background: var(--gris-claro);
+  overflow-x: hidden;
+}
+
+#flipbook-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #1a3c27 0%, #2d5a3d 50%, #4a7c59 100%);
+  position: relative;
+}
+
+#flipbook {
+  width: 900px;
+  height: 600px;
+  position: relative;
+  perspective: 2000px;
+}
+
+.page {
+  width: 900px;
+  height: 600px;
+  position: absolute;
+  top: 0; left: 0;
+  background: var(--blanco);
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.25,0.1,0.25,1);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  backface-visibility: hidden;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.page.flipped {
+  transform: rotateY(-180deg);
+  z-index: 0;
+}
+
+.page-content {
+  width: 100%; height: 100%;
+  padding: 0;
+  overflow-y: auto;
+  position: relative;
+}
+
+.page-back {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: var(--gris-claro);
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+  padding: 40px;
+}
+
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px; height: 50px;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 24px;
+  color: var(--verde-naturaleza);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-btn:hover {
+  background: var(--verde-naturaleza);
+  color: var(--blanco);
+  transform: translateY(-50%) scale(1.1);
+}
+
+#prev-btn { left: 20px; }
+#next-btn { right: 20px; }
+
+.page-indicator {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.9);
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  color: var(--verde-naturaleza);
+  font-weight: 600;
+  z-index: 1000;
+}
+
+/* PORTADA */
+.cover-page {
+  background: linear-gradient(135deg, var(--verde-oscuro) 0%, var(--verde-naturaleza) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: var(--blanco);
+  position: relative;
+  overflow: hidden;
+}
+
+.cover-page::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('https://images.unsplash.com/photo-1448375240586-882707db888b?w=900') center/cover;
+  opacity: 0.3;
+}
+
+.cover-content { position: relative; z-index: 2; padding: 40px; }
+
+.cover-badge {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  padding: 8px 24px;
+  border-radius: 30px;
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: inline-block;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.cover-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 56px;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 15px;
+  text-shadow: 2px 2px 20px rgba(0,0,0,0.3);
+}
+
+.cover-subtitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.cover-divider {
+  width: 80px;
+  height: 3px;
+  background: var(--blanco);
+  margin: 25px auto;
+  opacity: 0.6;
+}
+
+.cover-meta {
+  font-size: 13px;
+  opacity: 0.8;
+  line-height: 1.8;
+}
+
+/* ÍNDICE */
+.index-page { background: var(--blanco); }
+
+.index-header {
+  background: var(--verde-naturaleza);
+  color: var(--blanco);
+  padding: 30px 40px;
+  text-align: center;
+}
+
+.index-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.index-list {
+  padding: 30px 50px;
+  list-style: none;
+}
+
+.index-list li {
+  display: flex;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px dotted #ddd;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.index-list li:hover {
+  color: var(--verde-naturaleza);
+  padding-left: 10px;
+}
+
+.index-list .chapter-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--verde-claro);
+  min-width: 50px;
+}
+
+.index-list .chapter-title {
+  font-size: 16px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.index-list .chapter-page {
+  font-family: 'Oswald', sans-serif;
+  font-size: 20px;
+  color: var(--tono-tierra);
+}
+
+.dots {
+  flex: 1;
+  border-bottom: 2px dotted #ccc;
+  margin: 0 10px;
+  position: relative;
+  top: -5px;
+}
+
+/* CONTENIDO GENERAL */
+.content-header {
+  background: var(--verde-naturaleza);
+  color: var(--blanco);
+  padding: 25px 40px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.chapter-number {
+  font-family: 'Oswald', sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  opacity: 0.3;
+  line-height: 1;
+}
+
+.chapter-info h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.chapter-info p {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.content-body {
+  padding: 30px 40px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--gris-texto);
+}
+
+.content-body p { margin-bottom: 15px; text-align: justify; }
+
+.content-body h4 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+  color: var(--verde-naturaleza);
+  margin: 20px 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.pull-quote {
+  background: var(--gris-claro);
+  border-left: 4px solid var(--verde-naturaleza);
+  padding: 15px 20px;
+  margin: 20px 0;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--verde-oscuro);
+}
+
+.image-container {
+  margin: 20px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px var(--sombra);
+}
+
+.image-container img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.image-caption {
+  background: var(--verde-naturaleza);
+  color: var(--blanco);
+  padding: 8px 15px;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.stat-box {
+  background: linear-gradient(135deg, var(--verde-naturaleza), var(--verde-claro));
+  color: var(--blanco);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  margin: 15px 0;
+}
+
+.stat-number {
+  font-family: 'Oswald', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.stat-label { font-size: 12px; opacity: 0.9; }
+
+/* TARJETAS INTERACTIVAS */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.info-card {
+  background: linear-gradient(135deg, var(--verde-naturaleza), var(--verde-claro));
+  color: var(--blanco);
+  padding: 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(45,90,61,0.3);
+}
+
+.info-card .card-icon { font-size: 28px; margin-bottom: 8px; }
+.info-card .card-title { font-size: 13px; font-weight: 600; }
+
+/* POPUP */
+.popup-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.popup-overlay.active { display: flex; }
+
+.popup-content {
+  background: var(--blanco);
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: popupIn 0.3s ease;
+}
+
+@keyframes popupIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.popup-header {
+  background: var(--verde-naturaleza);
+  color: var(--blanco);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.popup-header h3 { font-family: 'Playfair Display', serif; font-size: 20px; }
+
+.popup-close {
+  background: none;
+  border: none;
+  color: var(--blanco);
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.popup-body { padding: 25px; font-size: 14px; line-height: 1.8; color: var(--gris-texto); max-height: 60vh; overflow-y: auto; }
+.popup-body h4 { color: var(--verde-naturaleza); margin: 15px 0 8px 0; font-size: 16px; }
+.popup-body ul { margin-left: 20px; }
+.popup-body li { margin-bottom: 5px; }
+
+/* MAPA EXPLORACIÓN */
+.map-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  background: var(--gris-claro);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.map-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.map-legend {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+/* GRÁFICAS */
+.chart-container {
+  background: var(--gris-claro);
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 15px;
+  height: 180px;
+  padding: 10px 0;
+  justify-content: center;
+}
+
+.bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.bar {
+  width: 40px;
+  background: linear-gradient(to top, var(--verde-naturaleza), var(--verde-claro));
+  border-radius: 5px 5px 0 0;
+  transition: height 1s ease;
+  position: relative;
+}
+
+.bar-value {
+  position: absolute;
+  top: -20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--verde-naturaleza);
+}
+
+.bar-label {
+  font-size: 11px;
+  margin-top: 8px;
+  text-align: center;
+  color: var(--gris-texto);
+}
+
+/* TESTIMONIOS */
+.testimonial {
+  background: var(--gris-claro);
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px 0;
+  position: relative;
+}
+
+.testimonial::before {
+  content: '"';
+  font-family: 'Playfair Display', serif;
+  font-size: 60px;
+  color: var(--verde-claro);
+  opacity: 0.3;
+  position: absolute;
+  top: -10px;
+  left: 15px;
+}
+
+.testimonial-text {
+  font-style: italic;
+  font-size: 15px;
+  color: var(--gris-texto);
+  padding-left: 30px;
+}
+
+.testimonial-author {
+  text-align: right;
+  font-size: 13px;
+  color: var(--verde-naturaleza);
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+/* BIBLIOGRAFÍA */
+.bib-entry {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--gris-texto);
+}
+
+.bib-entry:last-child { border-bottom: none; }
+
+/* RESPONSIVE */
+@media (max-width: 950px) {
+  #flipbook { width: 95vw; height: 65vh; }
+  .page { width: 95vw; height: 65vh; }
+  .cover-title { font-size: 36px; }
+  .cards-grid { grid-template-columns: repeat(2, 1fr); }
+  .two-column { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .cover-title { font-size: 28px; }
+  .index-list { padding: 20px; }
+  .content-body { padding: 20px; }
+  .cards-grid { grid-template-columns: 1fr; }
+}
+
+/* SCROLLBAR */
+.page-content::-webkit-scrollbar { width: 6px; }
+.page-content::-webkit-scrollbar-track { background: transparent; }
+.page-content::-webkit-scrollbar-thumb { background: var(--verde-claro); border-radius: 3px; }
+
+.external-link {
+  color: var(--verde-naturaleza);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.external-link:hover {
+  color: var(--verde-oscuro);
+}
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.comparison-item {
+  text-align: center;
+}
+
+.comparison-item img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px var(--sombra);
+}
+
+.comparison-label {
+  margin-top: 10px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 16px;
+  color: var(--verde-naturaleza);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+</style>
+</head>
+<body>
+
+<div id="flipbook-container">
+  <div id="flipbook">
+
+    <!-- ==================== PÁGINA 1: PORTADA ==================== -->
+    <div class="page" id="page-1">
+      <div class="page-content cover-page">
+        <div class="cover-content">
+          <div class="cover-badge">Revista Digital Interactiva</div>
+          <h1 class="cover-title">Verde<br>Tuxtepec</h1>
+          <div class="cover-divider"></div>
+          <p class="cover-subtitle">Áreas Verdes y Desarrollo Sostenible</p>
+          <div class="cover-divider"></div>
+          <div class="cover-meta">
+            Omar Alvarado García<br>
+            CBTis 107 — Grupo 4 ALC-M<br>
+            Proyecto Integrador
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PÁGINA 2: ÍNDICE ==================== -->
+    <div class="page" id="page-2">
+      <div class="page-content index-page">
+        <div class="index-header">
+          <h2>Índice</h2>
+          <p style="font-size:12px;opacity:0.8;margin-top:5px;">Navega por los capítulos de esta revista</p>
+        </div>
+        <ul class="index-list">
+          <li onclick="goToPage(3)">
+            <span class="chapter-num">01</span>
+            <span class="chapter-title">Nuestra conexión con las áreas verdes</span>
+            <span class="dots"></span>
+            <span class="chapter-page">03</span>
+          </li>
+          <li onclick="goToPage(4)">
+            <span class="chapter-num">02</span>
+            <span class="chapter-title">Tuxtepec en transformación</span>
+            <span class="dots"></span>
+            <span class="chapter-page">04</span>
+          </li>
+          <li onclick="goToPage(5)">
+            <span class="chapter-num">03</span>
+            <span class="chapter-title">¿Por qué desaparecen las áreas verdes?</span>
+            <span class="dots"></span>
+            <span class="chapter-page">05</span>
+          </li>
+          <li onclick="goToPage(6)">
+            <span class="chapter-num">04</span>
+            <span class="chapter-title">Consecuencias ambientales</span>
+            <span class="dots"></span>
+            <span class="chapter-page">06</span>
+          </li>
+          <li onclick="goToPage(7)">
+            <span class="chapter-num">05</span>
+            <span class="chapter-title">Impacto en la comunidad</span>
+            <span class="dots"></span>
+            <span class="chapter-page">07</span>
+          </li>
+          <li onclick="goToPage(8)">
+            <span class="chapter-num">06</span>
+            <span class="chapter-title">Mi especialidad y el desarrollo sostenible</span>
+            <span class="dots"></span>
+            <span class="chapter-page">08</span>
+          </li>
+          <li onclick="goToPage(9)">
+            <span class="chapter-num">07</span>
+            <span class="chapter-title">Voces de nuestra comunidad</span>
+            <span class="dots"></span>
+            <span class="chapter-page">09</span>
+          </li>
+          <li onclick="goToPage(10)">
+            <span class="chapter-num">08</span>
+            <span class="chapter-title">Explorando Tuxtepec</span>
+            <span class="dots"></span>
+            <span class="chapter-page">10</span>
+          </li>
+          <li onclick="goToPage(11)">
+            <span class="chapter-num">09</span>
+            <span class="chapter-title">Datos que hablan</span>
+            <span class="dots"></span>
+            <span class="chapter-page">11</span>
+          </li>
+          <li onclick="goToPage(12)">
+            <span class="chapter-num">10</span>
+            <span class="chapter-title">Soluciones para un Tuxtepec verde</span>
+            <span class="dots"></span>
+            <span class="chapter-page">12</span>
+          </li>
+          <li onclick="goToPage(13)">
+            <span class="chapter-num">11</span>
+            <span class="chapter-title">Conclusiones</span>
+            <span class="dots"></span>
+            <span class="chapter-page">13</span>
+          </li>
+          <li onclick="goToPage(14)">
+            <span class="chapter-num">12</span>
+            <span class="chapter-title">Bibliografía</span>
+            <span class="dots"></span>
+            <span class="chapter-page">14</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ==================== PÁGINA 3: CAP 1 ==================== -->
+    <div class="page" id="page-3">
+      <div class="page-content">
+        <div class="content-header">
+          <span class="chapter-number">01</span>
+          <div class="chapter-info">
+            <h3>Nuestra conexión con las áreas verdes</h3>
+            <p>Entendiendo la relación entre naturaleza y calidad de vida</p>
+          </div>
+        </div>
+        <div class="content-body">
+          <p>Las áreas verdes son espacios cubiertos predominantemente por vegetación que proporcionan múltiples beneficios a las comunidades urbanas y rurales. Desde parques y jardines hasta bosques urbanos y zonas ribereñas, estos espacios son fundamentales para el bienestar humano y la salud del planeta.</p>
+          
+          <div class="pull-quote">
+            "Las áreas verdes no son un lujo, son una necesidad vital para las ciudades del siglo XXI."
+          </div>
+
+          <h4>¿Qué son las áreas verdes?</h4>
+          <p>Según la Organización Mundial de la Salud (OMS), las áreas verdes son todos los espacios abiertos públicos y privados que están cubiertos de vegetación, ya sea de forma natural o cultivada. Incluyen parques, jardines, bosques urbanos, campos deportivos, corredores verdes, zonas ribereñas y hasta techos verdes.</p>
+
+          <div class="two-column">
+            <div class="stat-box">
+              <div class="stat-number">9 m²</div>
+              <div class="stat-label">Mínimo recomendado de área verde por habitante según la OMS</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number">30%</div>
+              <div class="stat-label">Reducción en enfermedades cardiovasculares con acceso a parques</div>
+            </div>
+          </div>
+
+          <h4>Importancia para la salud y el bienestar</h4>
+          <p>La investigación científica ha demostrado consistentemente que vivir cerca de áreas verdes se asocia con mejoras significativas en la salud física y mental. Un estudio publicado en <em>The Lancet</em> encontró que las personas con acceso a espacios verdes tienen menores tasas de obesidad, diabetes tipo 2, ansiedad y depresión.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PÁGINA 4: CAP 2 - TUXTEPEC EN TRANSFORMACIÓN ==================== -->
+    <div class="page" id="page-4">
+      <div class="page-content">
+        <div class="content-header">
+          <span class="chapter-number">02</span>
+          <div class="chapter-info">
+            <h3>Tuxtepec en transformación</h3>
+            <p>Del pueblo ribereño a la ciudad en crecimiento</p>
+          </div>
+        </div>
+        <div class="content-body">
+          <p>San Juan Bautista Tuxtepec, conocida como la <strong>"Perla del Papaloapan"</strong>, es una ciudad ubicada en la región de la Cuenca del Papaloapan, en el norte del estado de Oaxaca. Fundada oficialmente en 1811, la ciudad ha experimentado una transformación notable en las últimas décadas, pasando de ser un tranquilo pueblo ribereño a convertirse en uno de los centros urbanos más importantes de Oaxaca.</p>
+
+          <h4>Tuxtepec: Ayer y Hoy</h4>
+          <div class="comparison-grid">
+            <div class="comparison-item">
+              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTXfRNy9BPg1bfOHRTKjYv2d6Jk48x_uDaGw&s" alt="Tuxtepec Ayer">
+              <div class="comparison-label">Tuxtepec Ayer</div>
+            </div>
+            <div class="comparison-item">
+              <img src="https://images.trvl-media.com/place/6336123/544b59aa-ded4-4f5a-9c80-30a9829f9ca7.jpg" alt="Tuxtepec Hoy">
+              <div class="comparison-label">Tuxtepec Hoy</div>
+            </div>
+          </div>
+
+          <h4>Enlaces de referencia</h4>
+          <p>Para conocer más sobre la historia y cultura de Tuxtepec, consulta estos recursos:</p>
+          <ul style="margin-left:20px;margin-bottom:15px;">
+            <li><a href="https://mx.pinterest.com/adrian27mx/tuxtepec/" target="_blank" class="external-link">Colección de imágenes históricas de Tuxtepec en Pinterest</a></li>
+            <li><a href="https://es.wikipedia.org/wiki/San_Juan_Bautista_Tuxtepec" target="_blank" class="external-link">Artículo de Wikipedia sobre San Juan Bautista Tuxtepec</a></li>
+          </ul>
+
+          <h4>Transformación urbana</h4>
+          <p>Con una población que supera los 150,000 habitantes en su zona metropolitana, Tuxtepec ha visto expandirse sus fronteras urbanas de manera acelerada. La llegada de cadenas comerciales, la construcción de nuevas colonias residenciales y el desarrollo de infraestructura vial han modificado drásticamente el paisaje urbano de la ciudad.</p>
+
+          <div class="pull-quote">
+            "El crecimiento de Tuxtepec ha sido vertiginoso, pero no siempre planificado de manera sostenible."
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PÁGINA 5: CAP 3 ==================== -->
+    <div class="page" id="page-5">
+      <div class="page-content">
+        <div class="content-header">
+          <span class="chapter-number">03</span>
+          <div class="chapter-info">
+            <h3>¿Por qué desaparecen las áreas verdes?</h3>
+            <p>Causas y presiones sobre el entorno natural</p>
+          </div>
+        </div>
+        <div class="content-body">
+          <p>La pérdida de áreas verdes en Tuxtepec no es un fenómeno aislado. Responde a patrones de desarrollo urbano que se repiten en ciudades de todo México y América Latina. Identificar las causas es el primer paso para encontrar soluciones efectivas.</p>
+
+          <h4>Crecimiento urbano desordenado</h4>
+          <p>La expansión de la mancha urbana de Tuxtepec ha consumido terrenos que anteriormente eran zonas de vegetación, agricultura y corredores biológicos. La falta de planes de ordenamiento territorial actualizados ha permitido que el desarrollo inmobiliario ocupe espacios que deberían estar protegidos.</p>
+
+          <h4>La industria azucarera y su impacto</h4>
+          <p>Uno de los sectores económicos más importantes de la región es la industria azucarera. La zafra cañera ocupa vastas extensiones de tierra alrededor de Tuxtepec, lo que ha modificado el paisaje natural de la región.</p>
+
+          <div class="image-container">
+            <img src="https://www.elpinero.mx/wp-content/uploads/2024/12/ingenio-piasa-tuxtepec.jpg" alt="Ingenio Adolfo López Mateos" style="height:180px;object-fit:cover;width:100%;">
+            <div class="image-caption">
+              <a href="https://www.elpinero.mx/ingenio-adolfo-lopez-mateos-del-grupo-piasa-inicio-su-zafra-2024-2025/" target="_blank" class="external-link" style="color:#fff;">Ingenio Adolfo López Mateos del Grupo PIASA — Inicio de zafra 2024-2025 (El Piñero)</a>
+            </div>
+          </div>
+
+          <h4>Factores principales de pérdida</h4>
+          <div class="cards-grid">
+            <div class="info-card" onclick="openPopup('popup-c1')">
+              <div class="card-icon">🏗️</div>
+              <div class="card-title">Urbanización</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-c2')">
+              <div class="card-icon">🌾</div>
+              <div class="card-title">Agricultura extensiva</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-c3')">
+              <div class="card-icon">⚠️</div>
+              <div class="card-title">Falta de regulación</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-c4')">
+              <div class="card-icon">💰</div>
+              <div class="card-title">Intereses económicos</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-c5')">
+              <div class="card-icon">🌊</div>
+              <div class="card-title">Cambio climático</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-c6')">
+              <div class="card-icon">🚗</div>
+              <div class="card-title">Infraestructura vial</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PÁGINA 6: CAP 4 ==================== -->
+    <div class="page" id="page-6">
+      <div class="page-content">
+        <div class="content-header">
+          <span class="chapter-number">04</span>
+          <div class="chapter-info">
+            <h3>Consecuencias ambientales</h3>
+            <p>El costo ecológico de perder la naturaleza urbana</p>
+          </div>
+        </div>
+        <div class="content-body">
+          <p>La desaparición de áreas verdes en Tuxtepec y sus alrededores tiene consecuencias ambientales que afectan directamente la calidad de vida de sus habitantes. Estos impactos son acumulativos y, en muchos casos, irreversibles.</p>
+
+          <h4>Aumento de la temperatura urbana</h4>
+          <p>El fenómeno conocido como <strong>Isla de Calor Urbana</strong> se intensifica cuando las superficies verdes son reemplazadas por concreto y asfalto. En Tuxtepec, donde las temperaturas ya son elevadas durante gran parte del año, la falta de vegetación urbana puede incrementar la sensación térmica en varios grados Celsius.</p>
+
+          <div class="two-column">
+            <div>
+              <h4>Pérdida de biodiversidad</h4>
+              <p>Las áreas verdes funcionan como hábitats para aves, insectos polinizadores, pequeños mamíferos y reptiles. Su desaparición fragmenta estos ecosistemas, poniendo en riesso especies nativas de la Cuenca del Papaloapan.</p>
+            </div>
+            <div>
+              <h4>Mayor riesgo de inundaciones</h4>
+              <p>La vegetación y los suelos naturales absorben el agua de lluvia. Cuando estos espacios son impermeabilizados, el agua escurre rápidamente, saturando los sistemas de drenaje y aumentando el riesgo de inundaciones —un problema recurrente en zonas bajas de Tuxtepec.</p>
+            </div>
+          </div>
+
+          <h4>Deterioro de la calidad del aire</h4>
+          <p>Los árboles y la vegetación actúan como filtros naturales, absorbiendo partículas contaminantes y liberando oxígeno. La disminución de estos filtros verdes contribuye a la acumulación de contaminantes atmosféricos, especialmente en zonas con alta circulación vehicular.</p>
+
+          <div class="stat-box">
+            <div class="stat-number">2-8°C</div>
+            <div class="stat-label">Diferencia de temperatura entre zonas verdes y zonas urbanizadas sin vegetación</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PÁGINA 7: CAP 5 ==================== -->
+    <div class="page" id="page-7">
+      <div class="page-content">
+        <div class="content-header">
+          <span class="chapter-number">05</span>
+          <div class="chapter-info">
+            <h3>Impacto en la comunidad</h3>
+            <p>Cómo la pérdida de verde afecta la vida cotidiana</p>
+          </div>
+        </div>
+        <div class="content-body">
+          <p>Más allá de las cifras ambientales, la desaparición de áreas verdes tiene un impacto profundo y tangible en la vida diaria de los habitantes de Tuxtepec. Los efectos se manifiestan en la salud, la economía familiar, la cohesión social y la calidad de vida en general.</p>
+
+          <h4>Salud pública en riesgo</h4>
+          <p>La falta de espacios para la recreación física contribuye al sedentarismo y a enfermedades relacionadas. Además, la exposición prolongada a entornos sin vegetación se ha asociado con mayores niveles de estrés, ansiedad y fatiga mental. Los niños y adultos mayores son los grupos más vulnerables.</p>
+
+          <h4>Desigualdad en el acceso al verde</h4>
+          <p>No todas las colonias de Tuxtepec tienen el mismo acceso a áreas verdes. Las zonas de mayor marginación suelen ser también las más desprovistas de parques y jardines, generando una desigualdad ambiental que reproduce patrones de inequidad social.</p>
+
+          <div class="pull-quote">
+            "El acceso a áreas verdes no debería ser un privilegio, sino un derecho de todos los ciudadanos."
+          </div>
+
+          <h4>Pérdida de identidad cultural</h4>
+          <p>Tuxtepec históricamente ha tenido una relación cercana con el río Papaloapan y su entorno natural. La desaparición de estos espacios representa también una pérdida de la identidad cultural y de los lugares de memoria colectiva donde generaciones enteras crecieron y se relacionaron.</p>
+
+          <div class="two-column">
+            <div class="stat-box">
+              <div class="stat-number">+45%</div>
+              <div class="stat-label">Mayor riesgo de enfermedades mentales en áreas sin acceso a parques</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number">$</div>
+              <div class="stat-label">Gasto adicional en salud por familias sin áreas verdes cercanas</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PÁGINA 8: CAP 6 - REFLEXIÓN ==================== -->
+    <div class="page" id="page-8">
+      <div class="page-content">
+        <div class="content-header">
+          <span class="chapter-number">06</span>
+          <div class="chapter-info">
+            <h3>Mi especialidad y el desarrollo sostenible</h3>
+            <p>Conectando la formación académica con el entorno</p>
+          </div>
+        </div>
+        <div class="content-body">
+          <p>Como estudiante del <strong>CBTis 107</strong>, mi formación académica me permite vislumbrar oportunidades concretas para contribuir al desarrollo sostenible de Tuxtepec. La educación técnica no solo prepara para un trabajo, sino que también brinda herramientas para ser agentes de cambio en la comunidad.</p>
+
+          <h4>Reflexión</h4>
+          <div class="testimonial">
+            <div class="testimonial-text">
+              A lo largo de este proyecto, he comprendido que la pérdida de áreas verdes en Tuxtepec no es un problema que le corresponda solo a las autoridades o a los ambientalistas. Es una responsabilidad compartida que nos involucra a todos como ciudadanos. Mi formación en el CBTis 107 me ha enseñado que la tecnología y la innovación pueden ser aliadas fundamentales para construir ciudades más sostenibles. Desde sistemas de riego eficientes hasta plataformas de monitoreo ambiental, existen múltiples formas en las que mi especialidad puede contribuir a preservar y recuperar las áreas verdes de nuestra ciudad. El verdadero cambio comienza cuando cada persona decide actuar desde su ámbito de influencia.
+            </div>
+            <div class="testimonial-author">— Omar Alvarado García, CBTis 107</div>
+          </div>
+
+          <h4>Compromisos personales</h4>
+          <ul style="margin-left:20px;">
+            <li>Participar activamente en jornadas de reforestación urbana</li>
+            <li>Promover el cuidado de áreas verdes entre compañeros y familia</li>
+            <li>Utilizar mis conocimientos técnicos para proponer soluciones innovadoras</li>
+            <li>Denunciar la tala ilegal y la invasión de zonas protegidas</li>
+            <li>Contribuir en la creación de huertos comunitarios y jardines escolares</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PÁGINA 9: CAP 7 - REYNA JIMÉNEZ DOMÍNGUEZ ==================== -->
+    <div class="page" id="page-9">
+      <div class="page-content">
+        <div class="content-header">
+          <span class="chapter-number">07</span>
+          <div class="chapter-info">
+            <h3>Voces de nuestra comunidad</h3>
+            <p>Testimonios de quienes viven la transformación de Tuxtepec</p>
+          </div>
+        </div>
+        <div class="content-body">
+          <p>Las experiencias de los habitantes de Tuxtepec ilustran de manera vívida los cambios que ha experimentado la ciudad en las últimas décadas. Estos testimonios personales complementan los datos estadísticos con la perspectiva humana del fenómeno.</p>
+
+          <div class="testimonial">
+            <div class="testimonial-text">
+              Cuando era niña, salíamos a jugar al campo que quedaba detrás de la colonia. Había árboles de mango, naranjo y un arroyo donde pescábamos tortugas. Hoy ese lugar es una plaza comercial. Los niños de ahora no saben lo que es tener la naturaleza a dos pasos de casa. Extraño ese Tuxtepec verde donde crecí.
+            </div>
+            <div class="testimonial-author">— Reyna Jiménez Domínguez</div>
+          </div>
+
+          <div class="testimonial">
+            <div class="testimonial-text">
+              Trabajo como jardinero desde hace 25 años y he visto cómo los jardines de las casas han ido desapareciendo. Antes, hasta las casas más humildes tenían su patio con limonero o su jardincito. Ahora todo es concreto. La gente prefiere estacionamiento antes que un árbol que da sombra y fruto. Eso tiene un costo que no vemos de inmediato, pero se paga con el calor y el aire pesado.
+            </div>
+            <div class="testimonial-author">— Martín Hernández Cruz, jardinero urbano</div>
+          </div>
+
+          <div class="testimonial">
+            <div class="testimonial-text">
+              Como docente, noto la diferencia en los niños que viven cerca de parques versus los que no. Los primeros son más activos, creativos y menos propensos a problemas de atención. Hemos perdido muchos espacios verdes escolares por expansiones de aulas. Necesitamos recuperar esos patios arbolados.
+            </div>
+            <div class="testimonial-author">— Profesora Laura Esther Vázquez</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PÁGINA 10: CAP 8 - MAPA Y LUGARES ==================== -->
+    <div class="page" id="page-10">
+      <div class="page-content">
+        <div class="content-header">
+          <span class="chapter-number">08</span>
+          <div class="chapter-info">
+            <h3>Explorando Tuxtepec</h3>
+            <p>Mapa y lugares representativos de la ciudad</p>
+          </div>
+        </div>
+        <div class="content-body">
+          <p>Tuxtepec cuenta con una diversidad de espacios que van desde zonas altamente urbanizadas hasta áreas que aún conservan su carácter natural. Conocer estos lugares es fundamental para entender los retos y oportunidades del desarrollo urbano sostenible.</p>
+
+          <h4>Mapa de Tuxtepec</h4>
+          <div class="map-container">
+            <img src="https://imgv2-2-f.scribdassets.com/img/document/985732292/original/0899831b73/1?v=1" alt="Mapa de Tuxtepec">
+          </div>
+
+          <h4>Lugares representativos</h4>
+          <div class="two-column">
+            <div>
+              <div class="image-container">
+                <img src="https://tuxtepecturismo.com/wp-content/uploads/2019/02/DSC01778-1-1024x684.jpg" alt="Parques de Tuxtepec">
+                <div class="image-caption">Parques y espacios recreativos</div>
+              </div>
+            </div>
+            <div>
+              <div class="image-container">
+                <img src="https://turismo.tuxtepec.gob.mx/wp-content/uploads/2022/04/3-scaled.jpg" alt="Áreas verdes de Tuxtepec">
+                <div class="image-caption">Áreas verdes y zonas naturales</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="image-container" style="margin-top:15px;">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMwz9KfRithwzveVU9AjlwDkE9fPH4haZo1A&" alt="Zonas urbanizadas de Tuxtepec">
+            <div class="image-caption">Zonas urbanizadas y crecimiento de la mancha urbana</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PÁGINA 11: CAP 9 - DATOS ==================== -->
+    <div class="page" id="page-11">
+      <div class="page-content">
+        <div class="content-header">
+          <span class="chapter-number">09</span>
+          <div class="chapter-info">
+            <h3>Datos que hablan</h3>
+            <p>Infografía con estadísticas sobre áreas verdes</p>
+          </div>
+        </div>
+        <div class="content-body">
+          <p>Los números revelan la magnitud del fenómeno de pérdida de áreas verdes no solo en Tuxtepec, sino a nivel nacional e internacional. Estas estadísticas sirven como punto de partida para la toma de decisiones informadas.</p>
+
+          <h4>M² de área verde por habitante</h4>
+          <div class="chart-container">
+            <div class="bar-chart">
+              <div class="bar-item">
+                <div class="bar" style="height:160px;"><span class="bar-value">9</span></div>
+                <span class="bar-label">Mínimo OMS</span>
+              </div>
+              <div class="bar-item">
+                <div class="bar" style="height:80px;"><span class="bar-value">4.5</span></div>
+                <span class="bar-label">Promedio México</span>
+              </div>
+              <div class="bar-item">
+                <div class="bar" style="height:130px;"><span class="bar-value">7.2</span></div>
+                <span class="bar-label">Oaxaca capital</span>
+              </div>
+              <div class="bar-item">
+                <div class="bar" style="height:50px;"><span class="bar-value">2.8</span></div>
+                <span class="bar-label">Tuxtepec<br>(estimado)</span>
+              </div>
+            </div>
+          </div>
+
+          <h4>Datos relevantes</h4>
+          <div class="two-column">
+            <div class="stat-box">
+              <div class="stat-number">30%</div>
+              <div class="stat-label">De áreas verdes urbanas perdidas en México en los últimos 20 años</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number">2.5M</div>
+              <div class="stat-label">Hectáreas de bosque perdidas anualmente en México</div>
+            </div>
+          </div>
+
+          <div class="pull-quote">
+            "México ha perdido el 40% de sus humedales y el 50% de sus bosques desde 1950. Las ciudades medianas como Tuxtepec enfrentan una presión inmobiliaria que acelera esta tendencia."
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PÁGINA 12: CAP 10 - SOLUCIONES ==================== -->
+    <div class="page" id="page-12">
+      <div class="page-content">
+        <div class="content-header">
+          <span class="chapter-number">10</span>
+          <div class="chapter-info">
+            <h3>Soluciones para un Tuxtepec verde</h3>
+            <p>Propuestas concretas desde lo individual a lo colectivo</p>
+          </div>
+        </div>
+        <div class="content-body">
+          <p>Frente a la pérdida de áreas verdes, existen múltiples estrategias que pueden implementarse a diferentes escalas. Desde acciones individuales hasta políticas públicas, cada aporte cuenta para revertir la tendencia y construir un Tuxtepec más sostenible.</p>
+
+          <h4>Estrategias por nivel de intervención</h4>
+          <div class="cards-grid">
+            <div class="info-card" onclick="openPopup('popup-s1')">
+              <div class="card-icon">🏠</div>
+              <div class="card-title">Nivel individual</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-s2')">
+              <div class="card-icon">🏫</div>
+              <div class="card-title">Nivel escolar</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-s3')">
+              <div class="card-icon">🏘️</div>
+              <div class="card-title">Nivel vecinal</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-s4')">
+              <div class="card-icon">🏛️</div>
+              <div class="card-title">Nivel municipal</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-s5')">
+              <div class="card-icon">🌳</div>
+              <div class="card-title">Reforestación</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-s6')">
+              <div class="card-icon">📋</div>
+              <div class="card-title">Normatividad</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-s7')">
+              <div class="card-icon">🌱</div>
+              <div class="card-title">Agricultura urbana</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-s8')">
+              <div class="card-icon">🤝</div>
+              <div class="card-title">Participación ciudadana</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-s9')">
+              <div class="card-icon">💧</div>
+              <div class="card-title">Manejo del agua</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-s10')">
+              <div class="card-icon">🛤️</div>
+              <div class="card-title">Corredores verdes</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-s11')">
+              <div class="card-icon">📱</div>
+              <div class="card-title">Tecnología ambiental</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-s12')">
+              <div class="card-icon">🎓</div>
+              <div class="card-title">Educación ambiental</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-s13')">
+              <div class="card-icon">🌿</div>
+              <div class="card-title">Jardines nativos</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-s14')">
+              <div class="card-icon">♻️</div>
+              <div class="card-title">Economía circular</div>
+            </div>
+            <div class="info-card" onclick="openPopup('popup-s15')">
+              <div class="card-icon">🌎</div>
+              <div class="card-title">Visión de futuro</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PÁGINA 13: CONCLUSIONES ==================== -->
+    <div class="page" id="page-13">
+      <div class="page-content">
+        <div class="content-header">
+          <span class="chapter-number">11</span>
+          <div class="chapter-info">
+            <h3>Conclusiones</h3>
+            <p>Reflexiones finales sobre áreas verdes y desarrollo sostenible</p>
+          </div>
+        </div>
+        <div class="content-body">
+          <p>A lo largo de esta revista digital hemos recorrido un camino que nos ha permitido comprender la importancia crítica de las áreas verdes en el contexto urbano de Tuxtepec, así como las consecuencias de su pérdida y las posibles vías de solución.</p>
+
+          <h4>Principales hallazgos</h4>
+          <ul style="margin-left:20px;margin-bottom:15px;">
+            <li><strong>Tuxtepec ha cambiado drásticamente</strong> en las últimas décadas, perdiendo gran parte de su cobertura vegetal original debido al crecimiento urbano desordenado.</li>
+            <li><strong>La pérdida de áreas verdes no es solo un problema ambiental</strong>, sino también de salud pública, equidad social y calidad de vida.</li>
+            <li><strong>Existen soluciones viables</strong> a diferentes escalas, desde acciones individuales hasta políticas públicas integrales.</li>
+            <li><strong>La participación ciudadana es esencial</strong> para exigir y construir un entorno urbano más sostenible.</li>
+            <li><strong>La educación técnica</strong> puede ser un motor de innovación para el desarrollo sostenible local.</li>
+          </ul>
+
+          <div class="pull-quote">
+            "El futuro de Tuxtepec depende de las decisiones que tomemos hoy. Cada árbol plantado, cada parque protegido y cada voz que se alza por el verde cuenta."
+          </div>
+
+          <h4>Compromiso final</h4>
+          <p>Este proyecto no termina con la entrega de esta revista. Es una invitación a la acción continua. Como jóvenes estudiantes, tenemos la responsabilidad y la capacidad de ser protagonistas del cambio que queremos ver en nuestra ciudad. La sostenibilidad no es una opción: es una necesidad imperiosa para las generaciones presentes y futuras.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PÁGINA 14: BIBLIOGRAFÍA ==================== -->
+    <div class="page" id="page-14">
+      <div class="page-content">
+        <div class="content-header">
+          <span class="chapter-number">12</span>
+          <div class="chapter-info">
+            <h3>Bibliografía</h3>
+            <p>Referencias consultadas para esta investigación</p>
+          </div>
+        </div>
+        <div class="content-body" style="font-size:12px;line-height:1.7;">
+
+          <h4>Libros</h4>
+          <div class="bib-entry">
+            Beatley, T. (2011). <em>Biophilic cities: Integrating nature into urban design and planning</em>. Island Press.
+          </div>
+          <div class="bib-entry">
+            McHarg, I. L. (1992). <em>Design with nature</em> (25th anniversary ed.). John Wiley & Sons.
+          </div>
+          <div class="bib-entry">
+            Forman, R. T. T. (2008). <em>Urban regions: Ecology and planning beyond the city</em>. Cambridge University Press.
+          </div>
+
+          <h4>Artículos científicos</h4>
+          <div class="bib-entry">
+            Hartig, T., Mitchell, R., de Vries, S., & Frumkin, H. (2014). Nature and health. <em>Annual Review of Public Health, 35</em>, 207-228.
+          </div>
+          <div class="bib-entry">
+            Wolch, J. R., Byrne, J., & Newell, J. P. (2014). Urban green space, public health, and environmental justice: The challenge of making cities 'just green enough'. <em>Landscape and Urban Planning, 125</em>, 234-244.
+          </div>
+          <div class="bib-entry">
+            World Health Organization. (2017). <em>Urban green spaces and health: A review of evidence</em>. WHO Regional Office for Europe.
+          </div>
+
+          <h4>Fuentes en línea</h4>
+          <div class="bib-entry">
+            INEGI. (2020). <em>Censo de Población y Vivienda 2020</em>. Instituto Nacional de Estadística y Geografía. https://www.inegi.org.mx
+          </div>
+          <div class="bib-entry">
+            SEMARNAT. (2021). <em>Indicadores ambientales del estado de Oaxaca</em>. Secretaría de Medio Ambiente y Recursos Naturales. https://www.semarnat.gob.mx
+          </div>
+          <div class="bib-entry">
+            Wikipedia. (2024). <em>San Juan Bautista Tuxtepec</em>. https://es.wikipedia.org/wiki/San_Juan_Bautista_Tuxtepec
+          </div>
+          <div class="bib-entry">
+            El Piñero. (2024). Ingenio Adolfo López Mateos del Grupo PIASA inició su zafra 2024-2025. https://www.elpinero.mx
+          </div>
+
+          <h4>Multimedia</h4>
+          <div class="bib-entry">
+            Pinterest. (2024). <em>Colección de imágenes históricas de Tuxtepec</em> [Tablero]. https://mx.pinterest.com/adrian27mx/tuxtepec/
+          </div>
+          <div class="bib-entry">
+            Scribd. (2024). <em>Mapa de Tuxtepec</em> [Documento]. https://www.scribd.com
+          </div>
+          <div class="bib-entry">
+            Tuxtepec Turismo. (2019). <em>Galería fotográfica de Tuxtepec</em> [Sitio web]. https://tuxtepecturismo.com
+          </div>
+          <div class="bib-entry">
+            Gobierno Municipal de Tuxtepec. (2022). <em>Turismo Tuxtepec — Áreas verdes</em> [Sitio web]. https://turismo.tuxtepec.gob.mx
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /flipbook -->
+
+  <!-- Botones de navegación -->
+  <button class="nav-btn" id="prev-btn" onclick="prevPage()">&#10094;</button>
+  <button class="nav-btn" id="next-btn" onclick="nextPage()">&#10095;</button>
+
+  <div class="page-indicator" id="page-indicator">1 / 14</div>
+</div>
+
+<!-- ==================== POPUPS ==================== -->
+
+<!-- Causas -->
+<div class="popup-overlay" id="popup-c1">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Urbanización desordenada</h3><button class="popup-close" onclick="closePopup('popup-c1')">&times;</button></div>
+    <div class="popup-body">
+      <p>La expansión de la mancha urbana sin planificación adecuada ha consumido terrenos verdes. La especulación inmobiliaria y la falta de regulación permiten la construcción en zonas que deberían estar protegidas.</p>
+      <h4>Impacto en Tuxtepec</h4>
+      <p>Nuevas colonias se desarrollan sobre antiguos terrenos de cultivo y zonas de vegetación ribereña, reduciendo drásticamente los espacios verdes disponibles.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-c2">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Agricultura extensiva</h3><button class="popup-close" onclick="closePopup('popup-c2')">&times;</button></div>
+    <div class="popup-body">
+      <p>La expansión de monocultivos como la caña de azúcar ha reemplazado ecosistemas naturales diversos por campos homogéneos que no proporcionan los mismos servicios ambientales.</p>
+      <h4>Impacto en Tuxtepec</h4>
+      <p>La zafra cañera circunda la ciudad, ocupando suelos que históricamente albergaban bosques de galería y humedales.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-c3">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Falta de regulación</h3><button class="popup-close" onclick="closePopup('popup-c3')">&times;</button></div>
+    <div class="popup-body">
+      <p>Los planes de ordenamiento territorial muchas veces no se actualizan ni se cumplen. La corrupción y la ausencia de fiscalización permiten la invasión de zonas protegidas.</p>
+      <h4>Impacto en Tuxtepec</h4>
+      <p>La falta de un atlas de riesgo actualizado y de normas claras de uso de suelo facilita la ocupación irregular de áreas verdes.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-c4">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Intereses económicos</h3><button class="popup-close" onclick="closePopup('popup-c4')">&times;</button></div>
+    <div class="popup-body">
+      <p>El valor económico del suelo urbano es mayor que el valor asignado a las áreas verdes. Esta lógica de mercado incentiva la venta y urbanización de terrenos verdes.</p>
+      <h4>Impacto en Tuxtepec</h4>
+      <p>Terrenos que albergaban vegetación han sido fraccionados y vendidos para desarrollos comerciales y residenciales de alta densidad.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-c5">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Cambio climático</h3><button class="popup-close" onclick="closePopup('popup-c5')">&times;</button></div>
+    <div class="popup-body">
+      <p>El cambio climático acelera la degradación de ecosistemas. Sequías prolongadas, incendios y plagas afectan la supervivencia de árboles y vegetación.</p>
+      <h4>Impacto en Tuxtepec</h4>
+      <p>Temperaturas extremas y patrones de lluvia irregulares dificultan la regeneración natural de áreas verces y aumentan la mortalidad de árboles urbanos.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-c6">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Infraestructura vial</h3><button class="popup-close" onclick="closePopup('popup-c6')">&times;</button></div>
+    <div class="popup-body">
+      <p>La construcción de carreteras, puentes y vialidades secundarias fragmenta los ecosistemas y consume espacios que podrían ser áreas verdes.</p>
+      <h4>Impacto en Tuxtepec</h4>
+      <p>La ampliación de la red vial ha dividido corredores biológicos y eliminado franjas de vegetación que servían como barreras naturales.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Soluciones -->
+<div class="popup-overlay" id="popup-s1">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Nivel individual</h3><button class="popup-close" onclick="closePopup('popup-s1')">&times;</button></div>
+    <div class="popup-body">
+      <p>Cada persona puede contribuir desde su hogar: plantar árboles nativos, crear jardines verticales, compostar residuos orgánicos, reducir el consumo de agua y reportar árboles en riesgo.</p>
+      <h4>Beneficios</h4>
+      <ul><li>Mejora la calidad del aire inmediato</li><li>Reduce la temperatura del hogar</li><li>Genera bienestar emocional</li></ul>
+      <h4>Aplicación en Tuxtepec</h4>
+      <p>Impulsar campañas de "Un árbol por familia" y talleres de jardinería urbana en colonias populares.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-s2">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Nivel escolar</h3><button class="popup-close" onclick="closePopup('popup-s2')">&times;</button></div>
+    <div class="popup-body">
+      <p>Las escuelas pueden convertirse en centros de educación ambiental: crear huertos escolares, implementar programas de reciclaje, organizar jornadas de reforestación y formar brigadas ecológicas.</p>
+      <h4>Beneficios</h4>
+      <ul><li>Formación de ciudadanos ambientalmente responsables</li><li>Mejora del entorno escolar</li><li>Aprendizaje experiencial</li></ul>
+      <h4>Aplicación en Tuxtepec</h4>
+      <p>Establecer huertos en todos los planteles de educación básica y media superior de la ciudad.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-s3">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Nivel vecinal</h3><button class="popup-close" onclick="closePopup('popup-s3')">&times;</button></div>
+    <div class="popup-body">
+      <p>Los comités vecinales pueden organizar la adopción de parques, crear jardines comunitarios, establecer viveros vecinales y vigilar la tala ilegal en su zona.</p>
+      <h4>Beneficios</h4>
+      <ul><li>Fortalecimiento del tejido social</li><li>Recuperación de espacios públicos</li><li>Mayor seguridad vecinal</li></ul>
+      <h4>Aplicación en Tuxtepec</h4>
+      <p>Crear una red de "vigilantes verdes" que monitoreen el estado de los árboles y parques de cada colonia.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-s4">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Nivel municipal</h3><button class="popup-close" onclick="closePopup('popup-s4')">&times;</button></div>
+    <div class="popup-body">
+      <p>El gobierno municipal debe actualizar el programa de desarrollo urbano, crear un área de protección de áreas verdes, destinar presupuesto específico y sancionar la invasión de zonas protegidas.</p>
+      <h4>Beneficios</h4>
+      <ul><li>Marco legal claro para el desarrollo</li><li>Planificación a largo plazo</li><li>Recursos públicos asignados</li></ul>
+      <h4>Aplicación en Tuxtepec</h4>
+      <p>Crear un Atlas de Áreas Verdes Urbanas y un reglamento específico de protección.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-s5">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Reforestación</h3><button class="popup-close" onclick="closePopup('popup-s5')">&times;</button></div>
+    <div class="popup-body">
+      <p>Reforestar con especies nativas es una de las estrategias más efectivas. No basta con plantar: se requiere monitoreo, riego inicial y protección contra plagas.</p>
+      <h4>Beneficios</h4>
+      <ul><li>Recuperación de hábitats</li><li>Captura de carbono</li><li>Regulación hídrica</li></ul>
+      <h4>Aplicación en Tuxtepec</h4>
+      <p>Reforestar riberas del Papaloapan y zonas degradadas con especies nativas como ceiba, guanacaste y zapote.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-s6">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Normatividad</h3><button class="popup-close" onclick="closePopup('popup-s6')">&times;</button></div>
+    <div class="popup-body">
+      <p>Es urgente contar con ordenamientos jurídicos que obliguen a desarrolladores a destinar porcentajes mínimos de área verde en nuevas construcciones y que protejan zonas ecológicas existentes.</p>
+      <h4>Beneficios</h4>
+      <ul><li>Seguridad jurídica</li><li>Desarrollo planificado</li><li>Preservación de ecosistemas</li></ul>
+      <h4>Aplicación en Tuxtepec</h4>
+      <p>Aprobar un Reglamento de Áreas Verdes Urbanas que exija al menos 10% de área verde en desarrollos inmobiliarios.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-s7">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Agricultura urbana</h3><button class="popup-close" onclick="closePopup('popup-s7')">&times;</button></div>
+    <div class="popup-body">
+      <p>Los huertos urbanos y la agricultura en azoteas transforman espacios ociosos en áreas productivas y verdes. Proporcionan alimentos frescos, mejoran la calidad del aire y crean comunidad.</p>
+      <h4>Beneficios</h4>
+      <ul><li>Seguridad alimentaria local</li><li>Reducción de huella de carbono</li><li>Generación de empleo verde</li></ul>
+      <h4>Aplicación en Tuxtepec</h4>
+      <p>Promover huertos familiares y comunitarios en terrenos baldíos y espacios escolares.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-s8">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Participación ciudadana</h3><button class="popup-close" onclick="closePopup('popup-s8')">&times;</button></div>
+    <div class="popup-body">
+      <p>La ciudadanía debe participar en foros ambientales, comités de planeación, observatorios ciudadanos y campañas de concientización. La presión social es clave para que las autoridades actúen.</p>
+      <h4>Beneficios</h4>
+      <ul><li>Democracia ambiental</li><li>Mayor rendición de cuentas</li><li>Soluciones más pertinentes</li></ul>
+      <h4>Aplicación en Tuxtepec</h4>
+      <p>Crear un Consejo Ciudadano del Medio Ambiente con representantes de todos los sectores.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-s9">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Manejo del agua</h3><button class="popup-close" onclick="closePopup('popup-s9')">&times;</button></div>
+    <div class="popup-body">
+      <p>Implementar sistemas de captación de agua de lluvia, reúso de agua gris y jardines de lluvia reduce la presión sobre los acuíferos y permite mantener áreas verdes sin desperdiciar agua potable.</p>
+      <h4>Beneficios</h4>
+      <ul><li>Ahorro de agua potable</li><li>Recarga de acuíferos</li><li>Menor escorrentía</li></ul>
+      <h4>Aplicación en Tuxtepec</h4>
+      <p>Instalar captadores de lluvia en escuelas y edificios públicos para riego de parques.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-s10">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Corredores verdes</h3><button class="popup-close" onclick="closePopup('popup-s10')">&times;</button></div>
+    <div class="popup-body">
+      <p>Los corredores verdes son franjas de vegetación que conectan parques y áreas naturales, permitiendo el flujo de fauna y la continuidad ecológica en la ciudad.</p>
+      <h4>Beneficios</h4>
+      <ul><li>Conectividad ecológica</li><li>Rutas seguras para ciclistas y peatones</li><li>Reducción de islas de calor</li></ul>
+      <h4>Aplicación en Tuxtepec</h4>
+      <p>Crear corredores a lo largo de los arroyos y canales urbanos que conecten parques principales.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-s11">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Tecnología ambiental</h3><button class="popup-close" onclick="closePopup('popup-s11')">&times;</button></div>
+    <div class="popup-body">
+      <p>Los sensores de calidad del aire, aplicaciones de reporte ciudadano y sistemas de riego automatizado pueden optimizar la gestión de áreas verdes y empoderar a la ciudadanía.</p>
+      <h4>Beneficios</h4>
+      <ul><li>Datos en tiempo real</li><li>Gestión eficiente de recursos</li><li>Transparencia</li></ul>
+      <h4>Aplicación en Tuxtepec</h4>
+      <p>Desarrollar una app móvil para reportar árboles en riesgo y monitorear la salud de áreas verdes.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-s12">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Educación ambiental</h3><button class="popup-close" onclick="closePopup('popup-s12')">&times;</button></div>
+    <div class="popup-body">
+      <p>Incorporar la educación ambiental de manera transversal en todos los niveles educativos garantiza que las nuevas generaciones valoren y protejan la naturaleza.</p>
+      <h4>Beneficios</h4>
+      <ul><li>Cultura ambiental sólida</li><li>Generaciones más conscientes</li><li>Cambio de patrones de consumo</li></ul>
+      <h4>Aplicación en Tuxtepec</h4>
+      <p>Incluir materias de ecología urbana en todos los planteles del nivel medio superior y superior.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-s13">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Jardines nativos</h3><button class="popup-close" onclick="closePopup('popup-s13')">&times;</button></div>
+    <div class="popup-body">
+      <p>Utilizar plantas nativas de la región del Papaloapan en jardines urbanos reduce el consumo de agua, atrae polinizadores locales y preserva la identidad biocultural de la zona.</p>
+      <h4>Beneficios</h4>
+      <ul><li>Bajo mantenimiento</li><li>Resistencia a sequías</li><li>Apoyo a fauna local</li></ul>
+      <h4>Aplicación en Tuxtepec</h4>
+      <p>Crear un vivero municipal de especies nativas para distribuir a la ciudadanía.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-s14">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Economía circular</h3><button class="popup-close" onclick="closePopup('popup-s14')">&times;</button></div>
+    <div class="popup-body">
+      <p>Implementar modelos de economía circular donde los residuos orgánicos se conviertan en compost para áreas verdes, y el agua gris se reutilice para riego, reduce la huella ecológica de la ciudad.</p>
+      <h4>Beneficios</h4>
+      <ul><li>Reducción de residuos</li><li>Abono natural para parques</li><li>Ahorro económico</li></ul>
+      <h4>Aplicación en Tuxtepec</h4>
+      <p>Establecer centros de compostaje comunitario en cada mercado público de la ciudad.</p>
+    </div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-s15">
+  <div class="popup-content">
+    <div class="popup-header"><h3>Visión de futuro</h3><button class="popup-close" onclick="closePopup('popup-s15')">&times;</button></div>
+    <div class="popup-body">
+      <p>Imaginar un Tuxtepec en 2050 donde cada habitante tenga acceso a un parque en menos de 10 minutos a pie, donde los ríos estén limpios y arbolados, y donde la ciudad coexista en armonía con la naturaleza.</p>
+      <h4>Beneficios</h4>
+      <ul><li>Mejor calidad de vida</li><li>Atracción de turismo ecológico</li><li>Legado para futuras generaciones</li></ul>
+      <h4>Aplicación en Tuxtepec</h4>
+      <p>Elaborar un Plan Maestro de Áreas Verdes con horizonte al año 2050, con metas cuantificables y presupuesto garantizado.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentPage = 0;
+const pages = document.querySelectorAll('.page');
+const totalPages = pages.length;
+
+function updatePages() {
+  pages.forEach((page, index) => {
+    page.style.zIndex = totalPages - index;
+    if (index < currentPage) {
+      page.classList.add('flipped');
+      page.style.zIndex = index + 1;
+    } else {
+      page.classList.remove('flipped');
+    }
+  });
+  document.getElementById('page-indicator').textContent = (currentPage + 1) + ' / ' + totalPages;
+}
+
+function nextPage() {
+  if (currentPage < totalPages - 1) {
+    currentPage++;
+    updatePages();
+  }
+}
+
+function prevPage() {
+  if (currentPage > 0) {
+    currentPage--;
+    updatePages();
+  }
+}
+
+function goToPage(pageNum) {
+  currentPage = pageNum - 1;
+  updatePages();
+}
+
+function openPopup(id) {
+  document.getElementById(id).classList.add('active');
+}
+
+function closePopup(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight') nextPage();
+  if (e.key === 'ArrowLeft') prevPage();
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.popup-overlay').forEach(p => p.classList.remove('active'));
+  }
+});
+
+document.querySelectorAll('.popup-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.classList.remove('active');
+  });
+});
+
+updatePages();
+</script>
+
+</body>
+</html>
